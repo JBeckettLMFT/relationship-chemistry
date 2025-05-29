@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relationship Periodic Table - Grouped Colors</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            background-color: #F8F9FA;
+            padding: 20px;
+            line-height: 1.4;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            color: #2C3E50;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+        
+        .periodic-table {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 4px;
+            margin-bottom: 40px;
+        }
+        
+        .element {
+            border: 1px solid #DEE2E6;
+            border-radius: 4px;
+            padding: 8px 6px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+        }
+        
+        .element:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 10;
+        }
+        
+        .atomic-number {
+            font-size: 12px;
+            font-weight: normal;
+            align-self: flex-start;
+        }
+        
+        .symbol {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 4px 0;
+        }
+        
+        .name {
+            font-size: 10px;
+            font-weight: normal;
+            line-height: 1.2;
+        }
+        
+        .type-badge {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            border: 1px solid rgba(255,255,255,0.5);
+        }
+        
+        /* Noble Elements - Gold */
+        .noble {
+            background-color: #B8860B;
+            color: white;
+        }
+        
+        /* Semi-Stable - Orange */
+        .semi-stable {
+            background-color: #FF7F50;
+            color: white;
+        }
+        
+        /* Moderately Reactive - Blue */
+        .moderate {
+            background-color: #4682B4;
+            color: white;
+        }
+        
+        /* Highly Reactive - Red */
+        .reactive {
+            background-color: #DC143C;
+            color: white;
+        }
+        
+        /* Type badges */
+        .practice-badge {
+            background-color: #2E8B57;
+        }
+        
+        .emotion-badge {
+            background-color: #9932CC;
+        }
+        
+        .relational-badge {
+            background-color: #FFD700;
+        }
+        
+        .empty {
+            background: none;
+            border: none;
+            cursor: default;
+        }
+        
+        .empty:hover {
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .legend {
+            max-width: 1400px;
+            margin: 0 auto;
+            margin-top: 30px;
+        }
+        
+        .legend-section {
+            margin-bottom: 20px;
+        }
+        
+        .legend-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #2C3E50;
+            font-size: 16px;
+        }
+        
+        .legend-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 3px;
+            border: 1px solid #DEE2E6;
+        }
+        
+        .legend-badge {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 1px solid #666;
+        }
+        
+        .legend-text {
+            font-size: 14px;
+            color: #2C3E50;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 30px;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 500px;
+            position: relative;
+        }
+        
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            position: absolute;
+            right: 15px;
+            top: 15px;
+        }
+        
+        .close:hover {
+            color: black;
+        }
+        
+        .modal h2 {
+            color: #2C3E50;
+            margin-bottom: 15px;
+        }
+        
+        .modal p {
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .periodic-table {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 2px;
+            }
+            
+            .element {
+                min-height: 60px;
+                padding: 4px;
+            }
+            
+            .symbol {
+                font-size: 14px;
+            }
+            
+            .name {
+                font-size: 8px;
+            }
+            
+            .atomic-number {
+                font-size: 10px;
+            }
+            
+            .type-badge {
+                width: 6px;
+                height: 6px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Relationship Periodic Table</h1>
+        <p>Open table of relationship elements and compounds - Grouped Colors</p>
+    </div>
+    
+    <div class="periodic-table" id="periodicTable">
+        <!-- Elements will be generated by JavaScript -->
+    </div>
+    
+    <div class="legend">
+        <div class="legend-section">
+            <div class="legend-title">Stability Levels (Main Colors)</div>
+            <div class="legend-items">
+                <div class="legend-item">
+                    <div class="legend-color noble"></div>
+                    <span class="legend-text">Noble Elements (Non-reactive)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color semi-stable"></div>
+                    <span class="legend-text">Semi-Stable (Decay without maintenance)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color moderate"></div>
+                    <span class="legend-text">Moderately Reactive (Need specific conditions)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color reactive"></div>
+                    <span class="legend-text">Highly Reactive (Volatile)</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="legend-section">
+            <div class="legend-title">Element Types (Small Dots)</div>
+            <div class="legend-items">
+                <div class="legend-item">
+                    <div class="legend-badge practice-badge"></div>
+                    <span class="legend-text">Practices/Behaviors</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-badge emotion-badge"></div>
+                    <span class="legend-text">Emotional States</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-badge relational-badge"></div>
+                    <span class="legend-text">Relational Qualities</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal -->
+    <div id="elementModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modalTitle"></h2>
+            <p id="modalType"></p>
+            <p id="modalDescription"></p>
+        </div>
+    </div>
+
+    <script>
+        const elements = [
+            // Row 1 - Most Foundational
+            {atomic: 1, symbol: 'S', name: 'Safety', stability: 'semi-stable', type: 'relational', description: 'The foundational feeling that you can be yourself without threat of harm, judgment, or abandonment.'},
+            {atomic: 2, symbol: 'Pl', name: 'Practices of Love', stability: 'noble', type: 'practice', description: 'Active choices to care for and prioritize your partner\'s wellbeing, regardless of how you feel in the moment.'},
+            {atomic: 3, symbol: 'R', name: 'Respect', stability: 'moderate', type: 'practice', description: 'Treating your partner as an equal with inherent worth and dignity.'},
+            {atomic: 4, symbol: 'A', name: 'Acceptance', stability: 'noble', type: 'practice', description: 'Non-reactive practice of allowing your partner to be who they are without trying to change them.'},
+            {atomic: 5, symbol: 'H', name: 'Honesty', stability: 'moderate', type: 'practice', description: 'Sharing truth about your thoughts, feelings, and experiences, even when difficult.'},
+            {atomic: 6, symbol: 'V', name: 'Vulnerability', stability: 'reactive', type: 'practice', description: 'The courage to share your authentic self and risk being truly seen.'},
+            {atomic: 7, symbol: 'C', name: 'Communication', stability: 'moderate', type: 'practice', description: 'The skill of expressing yourself clearly and listening to understand your partner.'},
+            {atomic: 8, symbol: 'T', name: 'Trust', stability: 'semi-stable', type: 'relational', description: 'Confidence that your partner will act with your best interests in mind.'},
+            {empty: true}, {empty: true},
+            
+            // Row 2
+            {atomic: 9, symbol: 'K', name: 'Kindness', stability: 'moderate', type: 'practice', description: 'Gentle, caring treatment that considers your partner\'s feelings and needs.'},
+            {atomic: 10, symbol: 'E', name: 'Empathy', stability: 'moderate', type: 'practice', description: 'The ability to understand and share your partner\'s emotional experience.'},
+            {atomic: 11, symbol: 'Au', name: 'Authenticity', stability: 'semi-stable', type: 'practice', description: 'Being genuine and true to yourself in the relationship.'},
+            {atomic: 12, symbol: 'In', name: 'Intimacy', stability: 'semi-stable', type: 'relational', description: 'Deep emotional and physical closeness that emerges from vulnerability and safety.'},
+            {atomic: 13, symbol: 'F', name: 'Friendship', stability: 'semi-stable', type: 'relational', description: 'The foundation of companionship, shared interests, and mutual enjoyment.'},
+            {atomic: 14, symbol: 'Fg', name: 'Forgiveness', stability: 'moderate', type: 'practice', description: 'Choosing to release resentment and create space for repair and growth.'},
+            {atomic: 15, symbol: 'Com', name: 'Commitment', stability: 'semi-stable', type: 'practice', description: 'The decision to prioritize the relationship through both good times and challenges.'},
+            {atomic: 16, symbol: 'Ac', name: 'Accountability', stability: 'moderate', type: 'practice', description: 'Taking responsibility for your impact on your partner and the relationship.'},
+            {empty: true}, {empty: true},
+            
+            // Row 3
+            {atomic: 17, symbol: 'Cp', name: 'Compassion', stability: 'moderate', type: 'practice', description: 'Kind understanding paired with action to help when your partner is suffering.'},
+            {atomic: 18, symbol: 'P', name: 'Patience', stability: 'moderate', type: 'practice', description: 'The ability to remain calm and understanding when change takes time.'},
+            {atomic: 19, symbol: 'G', name: 'Growth', stability: 'semi-stable', type: 'relational', description: 'The ongoing development and positive change that emerges in healthy relationships.'},
+            {atomic: 20, symbol: 'Fl', name: 'Flexibility', stability: 'moderate', type: 'practice', description: 'Willingness to adapt and adjust when circumstances or needs change.'},
+            {atomic: 21, symbol: 'N', name: 'Negotiation', stability: 'moderate', type: 'practice', description: 'Working together to find solutions that honor both partners\' needs.'},
+            {atomic: 22, symbol: 'At', name: 'Attunement', stability: 'moderate', type: 'practice', description: 'Sensitive awareness of your partner\'s emotional state and needs.'},
+            {atomic: 23, symbol: 'Hm', name: 'Humility', stability: 'moderate', type: 'practice', description: 'The willingness to be wrong, learn, and admit mistakes without defensiveness.'},
+            {atomic: 24, symbol: 'Cu', name: 'Curiosity', stability: 'moderate', type: 'practice', description: 'Genuine interest in understanding your partner\'s experience and perspective.'},
+            {empty: true}, {empty: true},
+            
+            // Row 4
+            {atomic: 25, symbol: 'Pt', name: 'Partnership', stability: 'moderate', type: 'practice', description: 'Approaching the relationship as a team working toward shared goals.'},
+            {atomic: 26, symbol: 'Hu', name: 'Humor', stability: 'moderate', type: 'practice', description: 'Shared laughter and lightness that creates joy and reduces tension.'},
+            {atomic: 27, symbol: 'Fl', name: 'Feelings of Love', stability: 'semi-stable', type: 'emotion', description: 'The emotional experience of affection, care, and attachment.'},
+            {atomic: 28, symbol: 'If', name: 'Infatuation', stability: 'semi-stable', type: 'emotion', description: 'Intense romantic attraction that tends to fade without deeper connection.'},
+            {atomic: 29, symbol: 'Ps', name: 'Passion', stability: 'reactive', type: 'emotion', description: 'Intense desire and energy that can enhance or destabilize relationships.'},
+            {atomic: 30, symbol: 'Ag', name: 'Anger', stability: 'reactive', type: 'emotion', description: 'Strong displeasure that can motivate change or create harm depending on expression.'},
+            {atomic: 31, symbol: 'Jl', name: 'Jealousy', stability: 'reactive', type: 'emotion', description: 'Fear-based emotion arising from perceived threats to the relationship.'},
+            {atomic: 32, symbol: 'Rs', name: 'Resentment', stability: 'reactive', type: 'emotion', description: 'Accumulated anger and hurt that corrodes connection over time.'},
+            {empty: true}, {empty: true},
+            
+            // Row 5
+            {atomic: 33, symbol: 'Bl', name: 'Blaming', stability: 'reactive', type: 'practice', description: 'Destructive practice of making your partner responsible for your feelings.'},
+            {atomic: 34, symbol: 'Cr', name: 'Criticizing', stability: 'reactive', type: 'practice', description: 'Attacking your partner\'s character rather than addressing specific behaviors.'},
+            {atomic: 35, symbol: 'Df', name: 'Defensiveness', stability: 'reactive', type: 'practice', description: 'Protecting yourself from perceived attack rather than listening to your partner.'},
+            {atomic: 36, symbol: 'Sw', name: 'Stonewalling', stability: 'reactive', type: 'practice', description: 'Shutting down and refusing to engage when overwhelmed or triggered.'},
+            {atomic: 37, symbol: 'Ct', name: 'Contempt', stability: 'reactive', type: 'practice', description: 'Expressing superiority and disgust toward your partner - the most toxic element.'},
+            {atomic: 38, symbol: 'Jd', name: 'Judging', stability: 'reactive', type: 'practice', description: 'Evaluating your partner\'s worth rather than seeking to understand their experience.'},
+            {atomic: 39, symbol: 'Sh', name: 'Shame', stability: 'reactive', type: 'emotion', description: 'Heavy feeling that you are fundamentally flawed or unworthy of love.'},
+            {empty: true}, {empty: true}, {empty: true}
+        ];
+
+        function createPeriodicTable() {
+            const table = document.getElementById('periodicTable');
+            
+            elements.forEach(element => {
+                const elementDiv = document.createElement('div');
+                
+                if (element.empty) {
+                    elementDiv.className = 'element empty';
+                } else {
+                    // Get stability class for main color
+                    let stabilityClass = element.stability;
+                    
+                    // Get type badge class
+                    let badgeClass = '';
+                    if (element.type === 'practice') badgeClass = 'practice-badge';
+                    else if (element.type === 'emotion') badgeClass = 'emotion-badge';
+                    else if (element.type === 'relational') badgeClass = 'relational-badge';
+                    
+                    elementDiv.className = `element ${stabilityClass}`;
+                    elementDiv.innerHTML = `
+                        <div class="atomic-number">${element.atomic}</div>
+                        <div class="symbol">${element.symbol}</div>
+                        <div class="name">${element.name}</div>
+                        <div class="type-badge ${badgeClass}"></div>
+                    `;
+                    
+                    elementDiv.addEventListener('click', () => showModal(element));
+                }
+                
+                table.appendChild(elementDiv);
+            });
+        }
+
+        function showModal(element) {
+            const modal = document.getElementById('elementModal');
+            const title = document.getElementById('modalTitle');
+            const type = document.getElementById('modalType');
+            const description = document.getElementById('modalDescription');
+            
+            title.textContent = `${element.name} (${element.symbol})`;
+            type.textContent = `Atomic Number: ${element.atomic} | Stability: ${element.stability} | Type: ${element.type}`;
+            description.textContent = element.description;
+            
+            modal.style.display = 'block';
+        }
+
+        // Modal controls
+        document.addEventListener('DOMContentLoaded', function() {
+            createPeriodicTable();
+            
+            const modal = document.getElementById('elementModal');
+            const closeBtn = document.getElementsByClassName('close')[0];
+            
+            closeBtn.onclick = function() {
+                modal.style.display = 'none';
+            }
+            
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    modal.style.display = 'none';
+                }
+            }
+        });
+    </script>
+</body>
+</html>
